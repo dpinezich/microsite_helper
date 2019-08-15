@@ -5,6 +5,8 @@ import datetime as dt
 from collections import OrderedDict
 import operator
 
+from mailing import test
+
 # Number of not accepted entries (not validated)
 not_accepted = 0
 
@@ -22,6 +24,9 @@ timestamps_validated = {}
 
 # names dict
 names_dict = {}
+
+# list of accepted uuids
+accepted_uuids = []
 
 # open the main db
 with open('db.json', encoding='utf-8') as json_file:
@@ -69,6 +74,9 @@ with open('db.json', encoding='utf-8') as json_file:
 
         if(dataset[entry]['validated'] != 1):
             not_accepted = not_accepted + 1
+        else:
+            accepted_uuids.append(entry)
+
 
         if(dataset[entry]['validated'] == 1):
             dt_object = str(dt.date.fromtimestamp(dataset[entry]['confirmation_time']/1000.0))
@@ -89,7 +97,7 @@ with open('db.json', encoding='utf-8') as json_file:
             else:
                 names_dict[name] = 0
 
-    json.dump(newDataset, open("test.json", "w"), ensure_ascii=False)
+    json.dump(newDataset, open("test.json", "w"))
 
 
 duplicates = 0
@@ -123,3 +131,16 @@ print("Total of valid entries " + str(full_number - not_accepted))
 
 print("Number of corrected " + str(corrected_pieces))
 print("Number of deleted " + str(deleted_pieces))
+
+
+mailing_accepts = 0
+# open the main db
+
+for id in test:
+    if id in accepted_uuids:
+        mailing_accepts = mailing_accepts + 1
+        print(id)
+
+
+print("************")
+print("Number of mailing accepts " + str(mailing_accepts))
